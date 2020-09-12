@@ -34,8 +34,4 @@ final class IndexedDataStoreTests: XCTestCase {
         }
         wait(for: [loadExpectation], timeout: 5)
     }
-
-    static var allTests = [
-        ("testStoreAndLoad", testStoreAndLoad),
-    ]
 }
