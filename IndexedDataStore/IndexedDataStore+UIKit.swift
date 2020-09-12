@@ -5,7 +5,7 @@
 //  Created by Toomas Vahter on 12.09.2020.
 //
 
-#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
 
 public extension IndexedDataStore {
