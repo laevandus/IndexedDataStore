@@ -5,6 +5,7 @@
 //  Created by Toomas Vahter on 12.09.2020.
 //
 
+#if !os(macOS)
 import UIKit
 
 public extension IndexedDataStore {
@@ -25,3 +26,4 @@ public extension IndexedDataStore {
         storeData({ image.jpegData(compressionQuality: 1.0) }, identifier: identifier, completionHandler: completionHandler)
     }
 }
+#endif
