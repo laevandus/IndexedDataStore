@@ -1,13 +1,25 @@
+//
+//  IndexedDataStore.swift
+//  IndexedDataStore
+//
+//  Created by Toomas Vahter on 30.08.2020.
+//
+
 import Foundation
 
+/// Persistent data store with data objects indexed by identifier.
 public final class IndexedDataStore {
     
     // MARK: Creating the Data Store
     
+    /// The name of the data store.
     public let name: String
+    
     private let dataStoreURL: URL
     private let queue: DispatchQueue
     
+    /// Creates a data store with the given name.
+    /// - Parameter name: The name of the data store.
     public init(name: String) throws {
         self.name = name
         queue = DispatchQueue(label: "com.augmentedcode.indexeddatastore", qos: .userInitiated, attributes: .concurrent, autoreleaseFrequency: .workItem)
@@ -22,12 +34,17 @@ public final class IndexedDataStore {
     
     // MARK: Loading Data
     
-    public func loadData<T>(forIdentifier identifier: Identifier, dataTransformer: @escaping (Data) -> (T?), completionHandler block: @escaping (T?) -> ()) {
+    /// Loads data asynchonously from the persistent data store.
+    /// - Parameters:
+    ///   - identifier: The identifier of the data.
+    ///   - dataTransformer: Transforms data to a specified type.
+    ///   - completionHandler: The block to execute after the operation’s main task is completed.
+    public func loadData<T>(forIdentifier identifier: Identifier, dataTransformer: @escaping (Data) -> T?, completionHandler: @escaping (T?) -> Void) {
         queue.async {
             let url = self.url(forIdentifier: identifier)
             guard FileManager.default.fileExists(atPath: url.path) else {
                 DispatchQueue.main.async {
-                    block(nil)
+                    completionHandler(nil)
                 }
                 return
             }
@@ -35,13 +52,13 @@ public final class IndexedDataStore {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 let object = dataTransformer(data)
                 DispatchQueue.main.async {
-                    block(object)
+                    completionHandler(object)
                 }
             }
             catch {
                 print("Failed reading data at URL \(url).")
                 DispatchQueue.main.async {
-                    block(nil)
+                    completionHandler(nil)
                 }
             }
         }
@@ -49,32 +66,32 @@ public final class IndexedDataStore {
     
     // MARK: Storing Data
     
+    /// Value type of the identifier.
     public typealias Identifier = String
     
-    public enum StorageStatus {
-        case failed(Error)
-        case noData
-        case success(Identifier)
-    }
-    
-    public func storeData(_ dataProvider: @escaping () -> (Data?), identifier: Identifier = UUID().uuidString, completionHandler block: @escaping (StorageStatus) -> ()) {
+    /// Store data asynchronously in persistent data store.
+    /// - Parameters:
+    ///   - dataProvider: The block providing data. Runs on a background thread.
+    ///   - identifier: The identifier of the data.
+    ///   - completionHandler: The block to execute after the operation’s main task is completed.
+    public func storeData(_ dataProvider: @escaping () -> Data?, identifier: Identifier = UUID().uuidString, completionHandler: @escaping (Result<Identifier, Error>) -> Void) {
         queue.async(flags: .barrier) {
             let url = self.url(forIdentifier: identifier)
             guard let data = dataProvider(), !data.isEmpty else {
                 DispatchQueue.main.async {
-                    block(.noData)
+                    completionHandler(.failure(IndexedDataStoreError.noDataProvided))
                 }
                 return
             }
             do {
                 try data.write(to: url, options: .atomic)
                 DispatchQueue.main.async {
-                    block(.success(identifier))
+                    completionHandler(.success(identifier))
                 }
             }
             catch {
                 DispatchQueue.main.async {
-                    block(.failed(error))
+                    completionHandler(.failure(error))
                 }
             }
         }
@@ -82,6 +99,8 @@ public final class IndexedDataStore {
     
     // MARK: Removing Data
     
+    /// Removes data stored in the persistent data store.
+    /// - Parameter identifier: The identifier of the data.
     public func removeData(forIdentifier identifier: Identifier) {
         queue.async(flags: .barrier) {
             let url = self.url(forIdentifier: identifier)
@@ -95,6 +114,7 @@ public final class IndexedDataStore {
         }
     }
     
+    /// Removes all the stored data objects.
     public func removeAll() {
         queue.async(flags: .barrier) {
             do {
@@ -106,4 +126,10 @@ public final class IndexedDataStore {
             }
         }
     }
+}
+
+/// Error indicating a reason why data was not written to the disk.
+public enum IndexedDataStoreError: Error {
+    /// Data provider did not return any data.
+    case noDataProvided
 }

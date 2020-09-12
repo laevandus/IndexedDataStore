@@ -1,5 +1,12 @@
-import XCTest
+//
+//  Test.swift
+//  IndexedDataStoreTests.swift
+//
+//  Created by Toomas Vahter on 12.09.2020.
+//
+
 @testable import IndexedDataStore
+import XCTest
 
 final class IndexedDataStoreTests: XCTestCase {
     private var dataStore: IndexedDataStore!
@@ -14,15 +21,13 @@ final class IndexedDataStoreTests: XCTestCase {
     
     func testStoreAndLoad() throws {
         let storeExpectation = XCTestExpectation(description: "Store")
-        dataStore.storeData({ return "Data".data(using: .utf8) }, identifier: "abc") { status in
-            switch status {
-            case .failed(let error):
-                XCTFail("Store operation should not fail with error \(error)")
-            case .noData:
-                XCTFail("Store operation should not fail")
+        dataStore.storeData({ return "Data".data(using: .utf8) }, identifier: "abc") { result in
+            switch result {
             case .success(let identifier):
                 XCTAssertEqual(identifier, "abc")
                 storeExpectation.fulfill()
+            case .failure(let error):
+                XCTFail("Store operation should not fail with error \(error)")
             }
         }
         wait(for: [storeExpectation], timeout: 5)
