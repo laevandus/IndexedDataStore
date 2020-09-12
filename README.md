@@ -1,3 +1,3 @@
 # IndexedDataStore
 
-A description of this package.
+IndexedDataStore is a persistent store for storing data objects.
