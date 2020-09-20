@@ -9,6 +9,9 @@
 import UIKit
 
 public extension IndexedDataStore {
+    
+    // MARK: Loading Images
+    
     /// Loads image asynchonously from persistent data store.
     /// - Parameters:
     ///   - identifier: The identifier of the image.
@@ -16,6 +19,8 @@ public extension IndexedDataStore {
     func loadImage(forIdentifier identifier: Identifier, completionHandler: @escaping (UIImage?) -> Void) {
         loadData(forIdentifier: identifier, dataTransformer: { UIImage(data: $0) }, completionHandler: completionHandler)
     }
+    
+    // MARK: Storing Images
     
     /// Store data asynchronously in persistent data store.
     /// - Parameters:

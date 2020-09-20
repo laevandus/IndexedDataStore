@@ -34,6 +34,9 @@ public final class IndexedDataStore {
     
     // MARK: Loading Data
     
+    /// Value type of the identifier.
+    public typealias Identifier = String
+    
     /// Loads data asynchonously from the persistent data store.
     /// - Parameters:
     ///   - identifier: The identifier of the data.
@@ -65,9 +68,6 @@ public final class IndexedDataStore {
     }
     
     // MARK: Storing Data
-    
-    /// Value type of the identifier.
-    public typealias Identifier = String
     
     /// Store data asynchronously in persistent data store.
     /// - Parameters:
