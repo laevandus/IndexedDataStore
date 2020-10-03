@@ -1,18 +1,21 @@
-name: IndexedDataStore
+name: CI
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches:
+      - '*'
 
 jobs:
   build:
-
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
+    - name: Prepare
+      run: brew bundle
+    - name: Lint
+      run: swiftlint
     - name: Build
       run: swift build -v
     - name: Run tests
