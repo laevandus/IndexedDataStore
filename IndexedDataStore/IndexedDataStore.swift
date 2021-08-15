@@ -67,6 +67,7 @@ public final class IndexedDataStore {
         }
     }
     
+    #if compiler(>=5.5)
     /// Loads data asynchonously from the persistent data store.
     /// - Parameters:
     ///   - identifier: The identifier of the data.
@@ -82,6 +83,7 @@ public final class IndexedDataStore {
             }
         })
     }
+    #endif
     
     // MARK: Storing Data
     
@@ -113,6 +115,7 @@ public final class IndexedDataStore {
         }
     }
     
+#if compiler(>=5.5)
     @available(iOS 15.0.0, *)
     @available(macOS 12.0.0, *)
     @available(tvOS 15.0.0, *)
@@ -124,6 +127,7 @@ public final class IndexedDataStore {
             }
         })
     }
+#endif
     
     // MARK: Removing Data
     

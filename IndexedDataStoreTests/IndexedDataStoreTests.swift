@@ -40,6 +40,7 @@ final class IndexedDataStoreTests: XCTestCase {
         wait(for: [loadExpectation], timeout: 5)
     }
     
+    #if compiler(>=5.5)
     @available(iOS 15.0.0, *)
     @available(macOS 12.0.0, *)
     @available(tvOS 15.0.0, *)
@@ -50,4 +51,5 @@ final class IndexedDataStoreTests: XCTestCase {
         let string = await dataStore.loadData(forIdentifier: "abc", dataTransformer: { String(decoding: $0, as: UTF8.self) })
         XCTAssertEqual(string, "Data")
     }
+    #endif
 }
