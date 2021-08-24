@@ -44,7 +44,7 @@ extension IndexedDataStore {
     }
     
     @available(iOS 15.0.0, *)
-    func storeImage(_ image: UIImage, identifier: Identifier = UUID().uuidString) async -> Identifier {
+    func storeImage(_ image: UIImage, identifier: Identifier = UUID().uuidString) async throws -> Identifier {
         return try await storeData({ image.jpegData(compressionQuality: 1.0) }, identifier: identifier)
     }
 }
