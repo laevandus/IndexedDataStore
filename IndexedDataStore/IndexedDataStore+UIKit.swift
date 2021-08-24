@@ -39,11 +39,13 @@ extension IndexedDataStore {
     /// - Parameters:
     ///   - identifier: The identifier of the image.
     @available(iOS 15.0.0, *)
+    @available(watchOS 8.0.0, *)
     func loadImage(forIdentifier identifier: Identifier) async -> UIImage? {
         return await loadData(forIdentifier: identifier, dataTransformer: { UIImage(data: $0) })
     }
     
     @available(iOS 15.0.0, *)
+    @available(watchOS 8.0.0, *)
     func storeImage(_ image: UIImage, identifier: Identifier = UUID().uuidString) async throws -> Identifier {
         return try await storeData({ image.jpegData(compressionQuality: 1.0) }, identifier: identifier)
     }
