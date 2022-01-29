@@ -67,15 +67,10 @@ public final class IndexedDataStore {
         }
     }
     
-    #if compiler(>=5.5)
     /// Loads data asynchonously from the persistent data store.
     /// - Parameters:
     ///   - identifier: The identifier of the data.
     ///   - dataTransformer: Transforms data to a specified type.
-    @available(iOS 15.0.0, *)
-    @available(macOS 12.0.0, *)
-    @available(tvOS 15.0.0, *)
-    @available(watchOS 8.0.0, *)
     public func loadData<T>(forIdentifier identifier: Identifier, dataTransformer: @escaping (Data) -> T?) async -> T? {
         return await withCheckedContinuation({ continuation in
             self.loadData(forIdentifier: identifier, dataTransformer: dataTransformer) { object in
@@ -83,7 +78,6 @@ public final class IndexedDataStore {
             }
         })
     }
-    #endif
     
     // MARK: Storing Data
     
@@ -115,11 +109,6 @@ public final class IndexedDataStore {
         }
     }
     
-#if compiler(>=5.5)
-    @available(iOS 15.0.0, *)
-    @available(macOS 12.0.0, *)
-    @available(tvOS 15.0.0, *)
-    @available(watchOS 8.0.0, *)
     public func storeData(_ dataProvider: @escaping () -> Data?, identifier: Identifier = UUID().uuidString) async throws -> Identifier {
         return try await withCheckedThrowingContinuation({ continuation in
             self.storeData(dataProvider, identifier: identifier) { result in
@@ -127,7 +116,6 @@ public final class IndexedDataStore {
             }
         })
     }
-#endif
     
     // MARK: Removing Data
     
